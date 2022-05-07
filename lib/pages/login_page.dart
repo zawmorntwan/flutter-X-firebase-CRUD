@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crud/constants/constants.dart';
+import 'package:firebase_crud/pages/forget_password_page.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -147,6 +148,34 @@ class _LoginPageState extends State<LoginPage> {
                         obscureText: isPasswordVisible,
                       ),
                     ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+
+                // forget password
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ForgetPasswordPage(),
+                          ),
+                        ),
+                        child: Text(
+                          'Forget password?',
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(

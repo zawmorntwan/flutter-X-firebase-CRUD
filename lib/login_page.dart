@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crud/constants/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,20 @@ class _LoginPageState extends State<LoginPage> {
   // text controller
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  Future signIn() async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 50,
                 ),
-          
+
                 // email text field
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -84,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 20,
                 ),
-          
+
                 // password text field
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -136,25 +151,28 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 30,
                 ),
-          
+
                 // signin button
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 25,
                   ),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: primaryColor,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Sign In',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                  child: GestureDetector(
+                    onTap: signIn,
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'Sign In',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ),
@@ -163,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 15,
                 ),
-          
+
                 // not a member? register now
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

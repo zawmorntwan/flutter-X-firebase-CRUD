@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../constants/constants.dart';
@@ -18,22 +19,40 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _ageController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _nameController.dispose();
+    _ageController.dispose();
     super.dispose();
   }
 
   Future signUp() async {
+
     if (passwordConfirmed()) {
+
+      // create user
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
+      // add user info
+      addUserDetails();
     }
+  }
+
+  Future addUserDetails () async {
+    await FirebaseFirestore.instance.collection('users').add({
+      'name' : _nameController.text,
+      'age' : _ageController.text,
+      'email' : _emailController.text,
+    });
   }
 
   bool passwordConfirmed() {
@@ -80,6 +99,72 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(
                   height: 50,
+                ),
+
+                // name text field
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 25.0,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(
+                        color: Colors.white,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                      child: TextField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Name',
+                        ),
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.text,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // age text field
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 25.0,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(
+                        color: Colors.white,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                      child: TextField(
+                        controller: _ageController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Age',
+                        ),
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
                 ),
 
                 // email text field

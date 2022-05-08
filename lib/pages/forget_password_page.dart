@@ -93,7 +93,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                     border: InputBorder.none,
                     hintText: 'Email',
                   ),
-                  textInputAction: TextInputAction.next,
+                  textInputAction: TextInputAction.done,
                   keyboardType: TextInputType.emailAddress,
                 ),
               ),

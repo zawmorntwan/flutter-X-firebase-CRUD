@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crud/utilities/error_alert.dart';
 import 'package:flutter/material.dart';
 import '../constants/constants.dart';
 
@@ -33,26 +34,47 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future signUp() async {
-
-    if (passwordConfirmed()) {
+    if (fillAllField() && passwordConfirmed()) {
 
       // create user
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
+      try {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
 
-      // add user info
-      addUserDetails();
+        // add user info
+        addUserDetails();
+
+        // error showing
+      } on FirebaseAuthException catch (e) {
+        showErrorAlert(
+          context,
+          e.message.toString(),
+        );
+      }
     }
   }
 
-  Future addUserDetails () async {
+  Future addUserDetails() async {
     await FirebaseFirestore.instance.collection('users').add({
-      'name' : _nameController.text,
-      'age' : _ageController.text,
-      'email' : _emailController.text,
+      'name': _nameController.text,
+      'age': _ageController.text,
+      'email': _emailController.text,
     });
+  }
+
+  bool fillAllField() {
+    if (_nameController.text.isNotEmpty &&
+        _ageController.text.isNotEmpty &&
+        _emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty &&
+        _confirmPasswordController.text.isNotEmpty) {
+      return true;
+    } else {
+      showErrorAlert(context, 'Please fill all fields!');
+      return false;
+    }
   }
 
   bool passwordConfirmed() {
@@ -60,6 +82,7 @@ class _RegisterPageState extends State<RegisterPage> {
         _confirmPasswordController.text.trim()) {
       return true;
     } else {
+      showErrorAlert(context, 'Password and confirm password does\'t match!');
       return false;
     }
   }

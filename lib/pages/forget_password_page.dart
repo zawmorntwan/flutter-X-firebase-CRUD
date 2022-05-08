@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crud/constants/constants.dart';
 import 'package:firebase_crud/pages/login_page.dart';
+import 'package:firebase_crud/utilities/error_alert.dart';
 import 'package:flutter/material.dart';
 
 class ForgetPasswordPage extends StatefulWidget {
@@ -21,28 +22,28 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   }
 
   Future passwordReset() async {
-    try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(
-        email: _emailController.text.trim(),
-      );
-      Navigator.pop(context);
-      showDialog(
-        context: context,
-        builder: (context) => const AlertDialog(
-          content: Text(
-            'Password reset link sent! Check your email.',
-          ),
-        ),
-      );
-    } on FirebaseAuthException catch (e) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          content: Text(
-            e.message.toString(),
-          ),
-        ),
-      );
+    if (isEmailFilled()) {
+      try {
+        await FirebaseAuth.instance.sendPasswordResetEmail(
+          email: _emailController.text.trim(),
+        );
+        Navigator.pop(context);
+        showErrorAlert(context, 'Password reset link sent! Check your email.');
+      } on FirebaseAuthException catch (e) {
+        showErrorAlert(
+          context,
+          e.message.toString(),
+        );
+      }
+    }
+  }
+
+  bool isEmailFilled() {
+    if (_emailController.text.isEmpty) {
+      showErrorAlert(context, 'Please fill your email!');
+      return false;
+    } else {
+      return true;
     }
   }
 

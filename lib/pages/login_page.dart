@@ -3,6 +3,8 @@ import 'package:firebase_crud/constants/constants.dart';
 import 'package:firebase_crud/pages/forget_password_page.dart';
 import 'package:flutter/material.dart';
 
+import '../utilities/error_alert.dart';
+
 class LoginPage extends StatefulWidget {
   final VoidCallback showRegisterPage;
   const LoginPage({Key? key, required this.showRegisterPage}) : super(key: key);
@@ -19,10 +21,34 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
 
   Future signIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-    );
+    if (fillAllField()) {
+      try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+      } on FirebaseAuthException catch (e) {
+        showErrorAlert(
+          context,
+          e.message.toString(),
+        );
+      }
+    }
+  }
+
+  bool fillAllField() {
+    if (_emailController.text.isEmpty && _passwordController.text.isEmpty) {
+      showErrorAlert(context, 'Please fill email and password!');
+      return false;
+    } else if (_emailController.text.isEmpty) {
+      showErrorAlert(context, 'Please fill email!');
+      return false;
+    } else if (_passwordController.text.isEmpty) {
+      showErrorAlert(context, 'Please fill password!');
+      return false;
+    } else {
+      return true;
+    }
   }
 
   @override
